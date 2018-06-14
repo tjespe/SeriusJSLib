@@ -5,7 +5,7 @@
 *   - A clickable cross will be added to the lightbox, it will close the lightbox when clicked
 *   - The lightbox can also be clicked by pressing the escape key
 */
-angular.module("lightboxes", [])
+angular.module("lightboxes", ["removable"])
 /**
  * Initiate a lightbox
  */
