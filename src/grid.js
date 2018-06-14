@@ -1,3 +1,4 @@
+//#CSS from external file required
 /**
  * Manages a nice grid table with sticky headers.
  * Row headings should have the class row-heading, and column headings should have the class column-heading.

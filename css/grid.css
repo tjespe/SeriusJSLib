@@ -1,0 +1,100 @@
+/* Grid tables */
+[grid] {
+  display: grid;
+  grid-gap: 5px;
+  position: relative;
+}
+.th, .td {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+[grid] > * {
+  position: relative;
+}
+[grid] > * *, [grid] input[type="text"] {
+  padding: 1px;
+}
+[grid] select, [grid] input[type="text"] {
+  width: 120px;
+  padding-top: 0;
+  padding-bottom: 0;
+  height: auto;
+}
+.row-heading, .column-heading {
+  min-height: fit-content;
+  padding: 0;
+  transition: opacity 0.2s;
+}
+.row-heading {
+  z-index: 5;
+}
+.row-heading::before {
+  border: 1px dashed #bbb;
+  content:  " ";
+  left: 0;
+  position:  absolute;
+  top: -3px;
+  width: 100vw;
+}
+@media screen and (min-width: 1000px) {
+  .row-heading::before {
+    width: calc(100vw - 80px);
+  }
+  .overflow > .row-heading::before {
+    width: 100vw;
+  }
+}
+.row-heading > span {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 40px;
+  bottom: 10px;
+}
+.column-heading {
+  width: fill-available;
+  width: -webkit-fill-available;
+  width: moz-available;
+  z-index: 4;
+}
+.row {
+  /** The .row class wraps several cells in a row and align them horizontally, column widths will vary */
+  display: flex;
+  height: auto;
+}
+.row > *, .row > input[type="text"] {
+  width: fit-content;
+  margin: 0 2px;
+  min-width: min-content;
+  height: auto;
+}
+.column {
+  /** The .column class will wrap children below each other, with arbitrary and independent row heights in each .column */
+  height: fit-content;
+}
+.column > * {
+  margin: 2px auto;
+  min-width:100%;
+  width: fit-content;
+}
+.column > .column-heading { /* In this scenario, the column headings are children of the same elements as the cells, if this is the case, margin-top:15px; must be set on the root element ([grid]) */
+  margin-top: -24px;
+  margin-bottom: 5px;
+  min-width: unset;
+  width: 100%;
+}
+button.expand:not(.clicked) ~ * {
+  display: none;
+}
+button.clicked {
+  display: none;
+}
+
+/* Webkit touch devices */
+@supports (-webkit-overflow-scrolling: touch) {
+  td input[type="text"], th input[type="text"], td select, th select {
+    min-height: 100%;
+    height: auto;
+    min-width: 0;
+  }
+}
