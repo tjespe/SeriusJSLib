@@ -1,25 +1,9 @@
+//#CSS from external file required
 /**
  * Creates a ripple ink effect when a child of an element with the HTML attribute "ink-list" is clicked
  * Optional: You can specify a desired ink color by using the HTML attribute "ink-color" on the ink-list
  */
 angular.module("ink-list", ["events"]).directive("inkList", ["$timeout", "q", "isClick", function ($timeout, q, isClick) {
-  q("style").append(`
-  [ink-list]>* {
-    position: relative;
-    overflow: hidden;
-  }
-  .ink {
-    display: block!important; position: absolute!important;
-    background: #fff;
-    opacity: 0.4;
-    border-radius: 100%;
-    transform: scale(0);
-    padding: initial;
-  }
-  .ink.animate {animation: ripple 0.65s linear;}
-  @keyframes ripple {
-    100% {opacity: 0; transform: scale(2.5);}
-  }`);
   return {
     link: function($scope, $element, $attrs) {
       let vm = this;
