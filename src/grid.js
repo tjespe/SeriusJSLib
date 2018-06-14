@@ -123,7 +123,7 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
           computed_left = div.slave.getBoundingClientRect().x+"px";
           if (div.last_computed_left !== computed_left) {
             div.style.left = 0;
-            div.style.top = $window.scrollY+"px";
+            div.style.top = div.parentElement.classList.contains("column") ? $window.scrollY+"px" : ($window.scrollY-17)+"px";
             div.style.position = "absolute";
           } else {
             div.style.left = computed_left;
