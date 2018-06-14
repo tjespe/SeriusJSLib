@@ -1,4 +1,4 @@
-angular.module("notifications", ["selectors"])
+angular.module("notifs", ["selectors"])
 /**
  * Create a good looking notification with contextual color
  * @param  {string} innerHTML The inner HTML of the new notification element

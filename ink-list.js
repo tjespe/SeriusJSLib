@@ -2,7 +2,7 @@
  * Creates a ripple ink effect when a child of an element with the HTML attribute "ink-list" is clicked
  * Optional: You can specify a desired ink color by using the HTML attribute "ink-color" on the ink-list
  */
-angular.module("ink", ["events"]).directive("inkList", ["$timeout", "q", "isClick", function ($timeout, q, isClick) {
+angular.module("ink-list", ["events"]).directive("inkList", ["$timeout", "q", "isClick", function ($timeout, q, isClick) {
   q("style").append(`
   [ink-list]>* {
     position: relative;
