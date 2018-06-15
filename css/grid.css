@@ -16,6 +16,7 @@
   padding: 1px;
 }
 [grid] select, [grid] input[type="text"] {
+  min-width: unset;
   width: 120px;
   padding-top: 0;
   padding-bottom: 0;
