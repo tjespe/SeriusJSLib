@@ -22,6 +22,9 @@
   padding-bottom: 0;
   height: auto;
 }
+.column > select {
+  min-width: 100%;
+}
 .row-heading, .column-heading {
   min-height: fit-content;
   padding: 0 !important;
