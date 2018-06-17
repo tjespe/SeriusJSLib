@@ -12,7 +12,7 @@ angular.module("removable", ["events", "selectors"]).directive("removable", ["is
     restrict: 'A',
     link: function (scope, element, attrs) {
       if (attrs.removable.length) {
-        if (!element.find("a[tabindex]").length) element.append(angular.element("<a tabindex=0>✖</a>"));
+        if (!element.find("a[tabindex]").length) element.prepend(angular.element("<a tabindex=0>✖</a>"));
         element.find("a").bind("click keypress", e=>{
           if (isClick(e)) {
             e.preventDefault();
@@ -21,7 +21,7 @@ angular.module("removable", ["events", "selectors"]).directive("removable", ["is
             scope.$eval(attrs.removable);
           }
         });
-      }
+      } else element[0].removeAttribute("removable");
     }
   };
 }]);
