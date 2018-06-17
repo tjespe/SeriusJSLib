@@ -1,3 +1,4 @@
+//#CSS from external file required
 /*
 * Module for creating and managing lightboxes.
 * Functionality:
