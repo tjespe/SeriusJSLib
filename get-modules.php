@@ -1,7 +1,7 @@
 <?php
 
 function loadModules(...$modules) {
-  $libURL = "https://raw.githubusercontent.com/tjespe/UsefulModules/master";
+  $libURL = "https://raw.githubusercontent.com/tjespe/SeriusJSLib/master";
   $css = "";
   $code = "window.dependencies = ".json_encode($modules).";\n";
   foreach ($modules as $module) {
