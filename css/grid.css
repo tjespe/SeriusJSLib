@@ -50,15 +50,15 @@
   }
 }
 .row-heading > span {
-  position: -webkit-sticky;
   position: sticky;
+  /* @alternate */ position: -webkit-sticky;
   top: 40px;
   bottom: 10px;
 }
 .column-heading {
   width: fill-available;
-  width: -webkit-fill-available;
-  width: moz-available;
+  /* @alternate */ width: -webkit-fill-available;
+  /* @alternate */ width: -moz-available;
   z-index: 4;
 }
 .row {
@@ -94,11 +94,11 @@ button.clicked {
   display: none;
 }
 
-/* Webkit touch devices */
-@supports (-webkit-overflow-scrolling: touch) {
+/* Webkit touch devices */ /** Commented out because it's not supported by the Closure Stylesheets minifier **/
+/*@supports (-webkit-overflow-scrolling: touch) {
   td input[type="text"], th input[type="text"], td select, th select {
     min-height: 100%;
     height: auto;
     min-width: 0;
   }
-}
+}*/
