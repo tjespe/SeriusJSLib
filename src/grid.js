@@ -114,7 +114,7 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
           });
         }
         elem.findAll(".column-heading").forEach(div=>{
-          elem.css("padding-top", "20px");
+          elem.css("padding-top", "18px");
           let computed_left = "", position = "fixed";
           if (!div.hasOwnProperty("slave")) {
             let selector = `[column="${div.getAttribute("column")}"]`;
