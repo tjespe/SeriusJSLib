@@ -69,6 +69,7 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
           div.style.height = newHeight+"px";
         });
         elem.findAll(".column-heading").forEach(div=>{
+          elem.css("padding-top", "20px");
           let newWidth = 0;
           let selector = `[column="${div.getAttribute("column")}"]`;
           if (div.parentElement.classList.contains("column")) newWidth = div.parentElement.clientWidth;
