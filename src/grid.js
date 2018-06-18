@@ -69,7 +69,6 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
           div.style.height = newHeight+"px";
         });
         elem.findAll(".column-heading").forEach(div=>{
-          elem.css("padding-top", "20px");
           let newWidth = 0;
           let selector = `[column="${div.getAttribute("column")}"]`;
           if (div.parentElement.classList.contains("column")) newWidth = div.parentElement.clientWidth;
@@ -115,6 +114,7 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
           });
         }
         elem.findAll(".column-heading").forEach(div=>{
+          elem.css("padding-top", "20px");
           let computed_left = "", position = "fixed";
           if (!div.hasOwnProperty("slave")) {
             let selector = `[column="${div.getAttribute("column")}"]`;
