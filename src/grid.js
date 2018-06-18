@@ -10,6 +10,7 @@
  *      - Column headings and the belonging elements are children of a .column element (only one column heading in each .column element)
  * If you are using row headings you need to speicify the "grid-template-columns" CSS attribute on the root element, with the value corresponding to the width-value of the row headings.
  * If a .column or .row has the .master class, it will be the heighest or widest, respectively, among its siblings. A "show all"-button will be added to the siblings that have hidden children.
+ * If you are using column headings, you might need to manually set a padding-top on your grid, to make sure no content is hidden.
  */
 angular.module("grid", []).directive("grid", ["$compile", "$window", function ($compile, $window) {
   return {
@@ -114,7 +115,6 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
           });
         }
         elem.findAll(".column-heading").forEach(div=>{
-          elem.css("padding-top", "18px");
           let computed_left = "", position = "fixed";
           if (!div.hasOwnProperty("slave")) {
             let selector = `[column="${div.getAttribute("column")}"]`;
