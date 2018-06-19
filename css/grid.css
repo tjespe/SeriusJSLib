@@ -33,13 +33,19 @@
 .row-heading {
   z-index: 5;
 }
-.row-heading::before {
+.row-heading::before, .column-heading::before {
   border: 1px dashed #bbb;
   content:  " ";
   left: 0;
   position:  absolute;
   top: -3px;
   width: 100vw;
+}
+.column-heading::before {
+  height: 100vh;
+  left: -3px;
+  width: 0;
+  top: 0;
 }
 @media screen and (min-width: 1000px) {
   .row-heading::before {
@@ -93,12 +99,3 @@ button.expand:not(.clicked) ~ * {
 button.clicked {
   display: none;
 }
-
-/* Webkit touch devices */ /** Commented out because it's not supported by the Closure Stylesheets minifier **/
-/*@supports (-webkit-overflow-scrolling: touch) {
-  td input[type="text"], th input[type="text"], td select, th select {
-    min-height: 100%;
-    height: auto;
-    min-width: 0;
-  }
-}*/
