@@ -83,8 +83,6 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
         });
         let childrenWidth = 0;
         elem.findAll("[row='1']").forEach(node=>childrenWidth += node.clientWidth);
-        if (childrenWidth > elem[0].clientWidth) elem.addClass("overflow");
-        else elem.removeClass("overflow");
         fixTHPositions();
       }
       /**

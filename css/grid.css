@@ -47,14 +47,6 @@
   width: 0;
   top: 0;
 }
-@media screen and (min-width: 1000px) {
-  .row-heading::before {
-    width: calc(100vw - 80px);
-  }
-  .overflow > .row-heading::before {
-    width: 100vw;
-  }
-}
 .row-heading > span {
   position: sticky;
   /* @alternate */ position: -webkit-sticky;
