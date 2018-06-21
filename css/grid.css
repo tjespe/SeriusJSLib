@@ -2,6 +2,7 @@
 [grid] {
   display: grid;
   grid-gap: 5px;
+  margin-bottom: 30px;
   position: relative;
 }
 .th, .td {
@@ -33,7 +34,7 @@
 .row-heading {
   z-index: 5;
 }
-.row-heading::before, .column-heading::before {
+.row-heading::before, .column::before, .column-heading::before, .column::after, .column-heading::after {
   border: 1px dashed #bbb;
   content:  " ";
   left: 0;
@@ -41,11 +42,15 @@
   top: -3px;
   width: 100vw;
 }
-.column-heading::before {
-  height: 100vh;
+.column::before, .column-heading::before, .column::after, .column-heading::after {
+  height: 100%;
   left: -3px;
   width: 0;
   top: 0;
+}
+.column::after, .column-heading::after {
+  left: unset;
+  right: -3px;
 }
 .row-heading > span {
   position: sticky;
@@ -72,7 +77,7 @@
 }
 .column {
   /** The .column class will wrap children below each other, with arbitrary and independent row heights in each .column */
-  height: fit-content;
+  /** Additionally, applying this class will enable column borders */
 }
 .column > * {
   margin: 2px auto;
