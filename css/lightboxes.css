@@ -32,7 +32,6 @@
   margin-left: auto;
   margin-right: auto;
   text-align: center;
-  box-shadow: 0 1px 10px #ccc;
 }
 [lightbox] a[tabindex] {
   top: 5px;
