@@ -2,7 +2,6 @@
 [grid] {
   display: grid;
   grid-gap: 5px;
-  margin-bottom: 30px;
   position: relative;
 }
 .th, .td {
