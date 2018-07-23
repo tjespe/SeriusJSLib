@@ -22,7 +22,8 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
       function fixVisibility() {
         elem.findAll(".master").forEach(master=>{
           let isCol = master.classList.contains("column");
-          let masterLength = isCol ? master.clientHeight : master.clientWidth;
+          let masterLength = 0;
+          angular.forEach(master.children, el=>masterLength += isCol ? el.clientHeight : el.clientWidth)
           if (masterLength < 150) masterLength = 150;
           let sibling = master.nextElementSibling;
           while (sibling && sibling.classList.contains(isCol ? "column" : "row") && !sibling.classList.contains("master")) {
