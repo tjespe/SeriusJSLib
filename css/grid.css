@@ -22,7 +22,7 @@
   padding-bottom: 0;
   height: auto;
 }
-.column > select {
+.column > select, .column input[type="text"] {
   min-width: 100%;
 }
 .row-heading, .column-heading {
