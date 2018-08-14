@@ -11,31 +11,42 @@
  * If you are using row headings you need to speicify the "grid-template-columns" CSS attribute on the root element, with the value corresponding to the width-value of the row headings.
  * If a .column or .row has the .master class, it will be the heighest or widest, respectively, among its siblings. A "show all"-button will be added to the siblings that have hidden children.
  * If you are using column headings, you might need to manually set a padding-top on your grid, to make sure no content is hidden.
+ * If a child of the grid has the HTML attribute "limit-height" og "limit-width", its height or width will be regulated to the value of the attribute by replacing some children with a "show all"-button.
  */
 angular.module("grid", []).directive("grid", ["$compile", "$window", function ($compile, $window) {
   return {
     restrict: 'A',
-    link: function (scope, elem, attrs) {
+    link: function (scope, grid, attrs) {
       /**
-       * Controls which table cells to show and not
+       * Controls which table cells to show and not (some are replaced with "show all"-buttons)
        */
       function fixVisibility() {
-        elem.findAll(".master").forEach(master=>{
-          let isCol = master.classList.contains("column");
-          let masterLength = 0;
-          angular.forEach(master.children, el=>masterLength += isCol ? el.clientHeight : el.clientWidth)
-          if (masterLength < 150) masterLength = 150;
+        grid.findAll(".master").forEach(master=>{
+          // Hide cells to make sure no slaves are higher or wider than their master
+          const isCol = master.classList.contains("column");
+          const lengthAttr = isCol ? "clientHeight" : "clientWidth";
+          let masterLength = Math.max(150, [...master.children].map(el=>el[lengthAttr]).reduce((prev, next)=>prev + next));
           let sibling = master.nextElementSibling;
           while (sibling && sibling.classList.contains(isCol ? "column" : "row") && !sibling.classList.contains("master")) {
             sibling.limitHeightOrWidth(isCol ? "height" : "width", masterLength);
             sibling = sibling.nextElementSibling;
           }
+
+          // Make sure the master is as high or wide as its heading
+          const idAttr = isCol ? "gridRowStart" : "gridColumnStart";
+          grid.findAll(isCol ? ".row-heading" : ".column-heading").forEach(heading=>{
+            if (heading.style[idAttr] === master.style[idAttr]) {
+              master.style[isCol ? "min-height" : "min-width"] = heading[lengthAttr]+"px";
+            }
+          });
         });
-        ["height", "width"].forEach(prop=>elem.findAll(`[limit-${prop}]`).forEach(div=>div.limitHeightOrWidth(prop, div.getAttribute("limit-"+prop))));
+
+        // Respect values set in the HTML attributes "limit-height" and "limit-width"
+        ["height", "width"].forEach(prop=>grid.findAll(`[limit-${prop}]`).forEach(div=>div.limitHeightOrWidth(prop, div.getAttribute("limit-"+prop))));
         fixTHDimensions();
       }
       /**
-       * Expansion of HTMLElement prototype that is used in 'fixVisibility' function
+       * Expansion of HTMLElement prototype that hides some children and replaces them with a butten if the parent is too large
        * @param  {string} dimension Either 'height' or 'width'
        * @param  {number} value     Max amount of pixels
        */
@@ -50,14 +61,15 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
           if (i < this.children.length) angular.element(this.children[Math.max(i-3, 0)]).after($compile(`<button onclick="this.classList.add('clicked')" ng-click="realign()" class="expand">Vis alt</button>`)(scope));
         }
       };
+      
       /**
        * Fixes the height and width of all elements in the grid with the classes row-heading and column-heading
        */
       function fixTHDimensions() {
-        elem.findAll(".row-heading").forEach(div=>{
+        grid.findAll(".row-heading").forEach(div=>{
         	let newHeight = 0;
-        	if (elem.find("[row]").length) {
-        		elem.findAll(`[row="${div.getAttribute("row")}"]`).forEach(td=>{
+        	if (grid.find("[row]").length) {
+        		grid.findAll(`[row="${div.getAttribute("row")}"]`).forEach(td=>{
         			if (!td.classList.contains("row-heading")) newHeight = Math.max(newHeight, td.clientHeight);
         		});
         	} else {
@@ -70,12 +82,12 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
         	}
           div.style.height = newHeight+"px";
         });
-        elem.findAll(".column-heading").forEach(div=>{
+        grid.findAll(".column-heading").forEach(div=>{
           let newWidth = 0;
           let selector = `[column="${div.getAttribute("column")}"]`;
           if (div.parentElement.classList.contains("column")) newWidth = div.parentElement.clientWidth;
-          else if (elem.find(selector).length) {
-            elem.findAll(selector).forEach(td=>{
+          else if (grid.find(selector).length) {
+            grid.findAll(selector).forEach(td=>{
               if (!td.classList.contains("column-heading")) newWidth = Math.max(newWidth, td.clientWidth);
             });
           } else if (div.nextElementSibling) newWidth = div.nextElementSibling.clientWidth;
@@ -83,19 +95,19 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
           div.style.maxWidth = newWidth+"px";
         });
         let childrenWidth = 0;
-        elem.findAll("[row='1']").forEach(node=>childrenWidth += node.clientWidth);
+        grid.findAll("[row='1']").forEach(node=>childrenWidth += node.clientWidth);
         fixTHPositions();
       }
       /**
        * Fixes positions of all elements with the classes row-heading and column-heading
        */
       function fixTHPositions() {
-        if (elem.find(".row-heading").length) {
-          elem.findAll(".row-heading").forEach(div=>{
+        if (grid.find(".row-heading").length) {
+          grid.findAll(".row-heading").forEach(div=>{
             let computed_top = "", position = "fixed";
             if (!div.hasOwnProperty("slave")) {
               let selector = `[row="${div.getAttribute("row")}"]`;
-              if (elem.findAll(selector).length > 1) div.slave = elem.findAll(selector)[1];
+              if (grid.findAll(selector).length > 1) div.slave = grid.findAll(selector)[1];
               else if (div.nextElementSibling) div.slave = div.nextElementSibling;
               else div.slave = null;
             }
@@ -113,11 +125,11 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
             div.last_computed_top = computed_top;
           });
         }
-        elem.findAll(".column-heading").forEach(div=>{
+        grid.findAll(".column-heading").forEach(div=>{
           let computed_left = "", position = "fixed";
           if (!div.hasOwnProperty("slave")) {
             let selector = `[column="${div.getAttribute("column")}"]`;
-            if (elem.findAll(selector).length > 1) div.slave = elem.findAll(selector)[1];
+            if (grid.findAll(selector).length > 1) div.slave = grid.findAll(selector)[1];
             else div.slave = div.parentElement;
           }
           computed_left = div.slave.getBoundingClientRect().x+"px";
