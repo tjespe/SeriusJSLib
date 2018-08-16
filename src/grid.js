@@ -18,6 +18,13 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
     restrict: 'A',
     link: function (scope, grid, attrs) {
       /**
+       * Remove temporary upper limitations on height and width (set in setMinDims()) before calling the other functions
+       */
+      function realign() {
+        grid.children().css({"min-height": "", "min-width": ""});
+        fixVisibility();
+      }
+      /**
        * Controls which table cells to show and not (some are replaced with "show all"-buttons)
        */
       function fixVisibility() {
@@ -31,14 +38,6 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
             sibling.limitHeightOrWidth(isCol ? "height" : "width", masterLength);
             sibling = sibling.nextElementSibling;
           }
-
-          // Make sure the master is as high or wide as its heading
-          const idAttr = isCol ? "gridRowStart" : "gridColumnStart";
-          grid.findAll(isCol ? ".row-heading" : ".column-heading").forEach(heading=>{
-            if (heading.style[idAttr] === master.style[idAttr]) {
-              master.style[isCol ? "min-height" : "min-width"] = heading[lengthAttr]+"px";
-            }
-          });
         });
 
         // Respect values set in the HTML attributes "limit-height" and "limit-width"
@@ -144,12 +143,26 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
           }
           div.last_computed_left = computed_left;
         });
+
+        setMinDims();
       }
 
-      angular.element($window.document).ready(fixVisibility);
+      function setMinDims() {
+        ["row", "column"].forEach(rowOrColumn=>{
+          const idAttr = rowOrColumn === "row" ? "gridRowStart" : "gridColumnStart";
+          const dimension = rowOrColumn === "row" ? "Height" : "Width";
+          grid.findAll(`.${rowOrColumn}-heading`).forEach(heading=>{
+            grid.children().forEach(el=>{
+              if (el.style[idAttr] === heading.style[idAttr]) el.style["min"+dimension] = heading["client"+dimension]+"px";
+            })
+          })
+        })
+      }
+
+      angular.element($window.document).ready(realign);
       $window.onscroll = fixTHPositions;
-      $window.onresize = fixTHDimensions;
-      scope.realign = fixVisibility; // Make realignment method available in scope
+      $window.onresize = realign;
+      scope.realign = realign; // Make realignment method available in scope
     }
   };
 }])
