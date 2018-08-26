@@ -17,7 +17,7 @@ angular.module("removable", ["events", "selectors"]).directive("removable", ["is
           if (isClick(e)) {
             e.preventDefault();
             e.target.blur();
-            element.parent().attr("lightbox") !== undefined ? element.parent().addClass("disappear") : element.addClass("disappear");
+            element.remove();
             scope.$eval(attrs.removable);
           }
         });
