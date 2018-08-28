@@ -17,9 +17,8 @@ angular.module("tabs", ["tabConfig"])
 .service("tabService", ["$http", "$location", "$rootScope", "$templateCache", "$timeout", "q", "qa", "tabConfig", function ($http, $location, $rootScope, $templateCache, $timeout, q, qa, tabConfig) {
   let pub = {}; // This object will be available as "tabs" in any scope
   let tab = Number($location.path().slice(1));
-
   tabConfig[-1] = ["Laster inn...", "<!-- Loading -->"];
-  
+
   pub.getTab = ()=>tab;
   pub.getTabTemplate = ()=>$templateCache.get(tab);
   pub.getTabDescription = ()=>tabConfig[tab][0];
@@ -29,8 +28,7 @@ angular.module("tabs", ["tabConfig"])
       else $templateCache.put(n, tabConfig[n][1]);
     }
     $location.path(n);
-    if (n !== tab) tab = -1;
-    $timeout(()=>tab = n, 0); // Change template after a 0ms timeout to make sure it happens after the HTML is replaced by loading icon
+    tab = n;
     qa("nav").children().removeClass("active");
     qa("nav").forEach(nav=>n < nav.children.length && n > -1 ? nav.children[n].classList.add("active") : null);
   };
