@@ -10,7 +10,7 @@
  *      - Column headings and the belonging elements are children of a .column element (only one column heading in each .column element)
  * If you are using row headings you need to speicify the "grid-template-columns" CSS attribute on the root element, with the value corresponding to the width-value of the row headings.
  * If a .column or .row has the .master class, it will be the heighest or widest, respectively, among its siblings. A "show all"-button will be added to the siblings that have hidden children.
- * If you are using column headings, you might need to manually set a padding-top on your grid, to make sure no content is hidden.
+ * If you are using column headings, you might want to manually set a padding-top on your grid, to prevent elements from moving when initalizing.
  * If a child of the grid has the HTML attribute "limit-height" og "limit-width", its height or width will be regulated to the value of the attribute by replacing some children with a "show all"-button.
  */
 angular.module("grid", []).directive("grid", ["$compile", "$window", function ($compile, $window) {
@@ -124,8 +124,11 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
             div.last_computed_top = computed_top;
           });
         }
-        grid.findAll(".column-heading").forEach(div=>{
-          let computed_left = "", position = "fixed";
+        const colHeadings = grid.findAll(".column-heading");
+        colHeadings.fixed = true;
+        colHeadings.height = 0;
+        colHeadings.forEach(div=>{
+          let computed_left = "";
           if (!div.hasOwnProperty("slave")) {
             let selector = `[column="${div.getAttribute("column")}"]`;
             if (grid.findAll(selector).length > 1) div.slave = grid.findAll(selector)[1];
@@ -135,14 +138,19 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
           if (div.last_computed_left !== computed_left) {
             div.style.left = 0;
             div.style.top = div.parentElement.classList.contains("column") ? $window.scrollY+"px" : ($window.scrollY-17)+"px";
-            div.style.position = "absolute";
+            colHeadings.fixed = false;
           } else {
             div.style.left = computed_left;
             div.style.top = "";
-            div.style.position = position;
           }
           div.last_computed_left = computed_left;
+          colHeadings.height = Math.max(colHeadings.height, div.clientHeight);
         });
+        colHeadings.areChildOfCol = colHeadings.parent().hasClass("column");
+        colHeadings.css("position", colHeadings.fixed ? "fixed" : "absolute");
+        colHeadings.css("margin-top", !colHeadings.fixed || colHeadings.areChildOfCol ? `-${colHeadings.height+colHeadings.areChildOfCol*2}px` : "");
+        grid.css("padding-top", `${colHeadings.height}px`);
+        if (!colHeadings.fixed) colHeadings.css({"top": "", "left": ""});
 
         setMinDims();
       }
