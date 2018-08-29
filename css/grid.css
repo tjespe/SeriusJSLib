@@ -84,8 +84,6 @@
   width: fit-content;
 }
 .column > .column-heading { /* In this scenario, the column headings are children of the same elements as the cells, if this is the case, margin-top:15px; must be set on the root element ([grid]) */
-  margin-top: -24px;
-  margin-bottom: 5px;
   min-width: unset;
   width: 100%;
 }
