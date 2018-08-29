@@ -10,7 +10,7 @@ angular.module("href", []).directive("href", function () {
         element.bind("click", e=>{
           if ("href" in attrs) {
             e.preventDefault();
-            window.location.href = attrs.href;
+            if (attrs.href.length) window.location.href = attrs.href;
           }
         })
       }
