@@ -125,6 +125,7 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
           });
         }
         const colHeadings = grid.findAll(".column-heading");
+        colHeadings.fixed = true;
         colHeadings.height = 0;
         colHeadings.forEach(div=>{
           let computed_left = "";
@@ -134,14 +135,22 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
             else div.slave = div.parentElement;
           }
           computed_left = div.slave.getBoundingClientRect().x+"px";
-          div.style.left = computed_left;
-          div.style.top = "";
+          if (div.last_computed_left !== computed_left) {
+            div.style.left = 0;
+            div.style.top = div.parentElement.classList.contains("column") ? $window.scrollY+"px" : ($window.scrollY-17)+"px";
+            colHeadings.fixed = false;
+          } else {
+            div.style.left = computed_left;
+            div.style.top = "";
+          }
+          div.last_computed_left = computed_left;
           colHeadings.height = Math.max(colHeadings.height, div.clientHeight);
         });
         colHeadings.areChildOfCol = colHeadings.parent().hasClass("column");
-        colHeadings.css("position", "fixed");
-        colHeadings.css("margin-top", colHeadings.areChildOfCol ? `-${colHeadings.height+colHeadings.areChildOfCol*2}px` : "");
+        colHeadings.css("position", colHeadings.fixed ? "fixed" : "absolute");
+        colHeadings.css("margin-top", !colHeadings.fixed || colHeadings.areChildOfCol ? `-${colHeadings.height+colHeadings.areChildOfCol*2}px` : "");
         grid.css("padding-top", `${colHeadings.height}px`);
+        if (!colHeadings.fixed) colHeadings.css({"top": "", "left": ""});
 
         setMinDims();
       }
