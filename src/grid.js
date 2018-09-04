@@ -150,6 +150,7 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
         colHeadings.css("position", colHeadings.fixed ? "fixed" : "absolute");
         colHeadings.css("margin-top", !colHeadings.fixed || colHeadings.areChildOfCol ? `-${colHeadings.height+colHeadings.areChildOfCol*2}px` : "");
         grid.css("padding-top", `${colHeadings.height}px`);
+        if (!colHeadings.fixed) colHeadings.css("left", "");
 
         setMinDims();
       }
