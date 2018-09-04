@@ -1,4 +1,3 @@
-//#CSS from external file required
 /*
  * angucomplete
  * Autocomplete directive for AngularJS
