@@ -127,6 +127,7 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
         const colHeadings = grid.findAll(".column-heading");
         colHeadings.fixed = true;
         colHeadings.height = 0;
+        colHeadings.areChildOfCol = colHeadings.parent().hasClass("column");
         colHeadings.forEach(div=>{
           let computed_left = "";
           if (!div.hasOwnProperty("slave")) {
@@ -136,8 +137,8 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
           }
           computed_left = div.slave.getBoundingClientRect().x+"px";
           if (div.last_computed_left !== computed_left) {
-            div.style.left = 0;
-            div.style.top = div.parentElement.classList.contains("column") ? $window.scrollY+"px" : ($window.scrollY-17)+"px";
+            div.style.left = "";
+            div.style.top = $window.scrollY+"px";
             colHeadings.fixed = false;
           } else {
             div.style.left = computed_left;
@@ -146,11 +147,9 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
           div.last_computed_left = computed_left;
           colHeadings.height = Math.max(colHeadings.height, div.clientHeight);
         });
-        colHeadings.areChildOfCol = colHeadings.parent().hasClass("column");
         colHeadings.css("position", colHeadings.fixed ? "fixed" : "absolute");
         colHeadings.css("margin-top", !colHeadings.fixed || colHeadings.areChildOfCol ? `-${colHeadings.height+colHeadings.areChildOfCol*2}px` : "");
         grid.css("padding-top", `${colHeadings.height}px`);
-        if (!colHeadings.fixed) colHeadings.css({"top": "", "left": ""});
 
         setMinDims();
       }
