@@ -52,7 +52,7 @@ angular.module("httpx", []).service('httpx', ['$http', '$q', function($http, $q)
             resolved = true;
             // Save new data to localStorage
             saveData(urls[0], response.data, Number(options.lifetime) + Date.now());
-          }).then(function errorCallback(response) {
+          }).catch(function errorCallback(response) {
             // Count error
             errors++;
             // If the request has not been resolved and all URL requests have failed, try to find data in localStorage even if it is not valid
@@ -61,7 +61,7 @@ angular.module("httpx", []).service('httpx', ['$http', '$q', function($http, $q)
                 deferred.resolve(stored_data);
                 resolved = true;
               } else {
-                deferred.reject("ERROR");
+                deferred.reject(response);
               }
             }
           });
