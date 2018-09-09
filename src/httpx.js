@@ -6,7 +6,7 @@
  * options.lifetime can be used to specify how many milliseconds the cached resource is valid
  * options.alt_urls can be used to specify alternative urls for the resource
  */
-angular.module("httpx", []).service('httpx', ['$http', '$q', function($http, $q) {
+angular.module("httpx", ["crc32"]).service('httpx', ['$http', '$q', 'crc32', function($http, $q, crc32) {
   // Make this service an extension of $http
   let vm = angular.extend({}, $http);
   // Attempt to use indexedDB:
@@ -43,12 +43,16 @@ angular.module("httpx", []).service('httpx', ['$http', '$q', function($http, $q)
         deferred.resolve(JSON.parse(stored_data));
         resolved = true;
       } else {
+        // Add the checksum of the stored data as a header to prevent the server from resending the same data
+        options.headers = {"Content-Hash": crc32(stored_data)};
         // Loop through urls and make requests
         for (let i = 0;i < urls.length;i++) {
           options.withCredentials = urls[i].includes("bris-cdn.cf");
           $http.get(urls[i], options).then(function successCallback(response) {
+            // Resolve with saved data if response from server was empty
+            if (!resolved && response.status === 204) deferred.resolve(JSON.parse(stored_data));
             // Resolve promise with data from request
-            if (!resolved) deferred.resolve(response.data);
+            else if (!resolved) deferred.resolve(response.data);
             resolved = true;
             // Save new data to localStorage
             saveData(urls[0], response.data, Number(options.lifetime) + Date.now());
