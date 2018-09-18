@@ -180,11 +180,11 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
 .directive("ngColumn", ngRowOrColumnAttr("column"));
 
 /** Helper directives that sets CSS based on the custom HTML attributes "column" and "row" */
-function rowOrColumnAttr(attr) {
+function rowOrColumnAttr(attr, linkFn) {
   return [function () {
     return {
       restrict: 'A',
-      link: function (scope, el, attrs) {
+      link: typeof linkFn === "function" ? linkFn : function (scope, el, attrs) {
         el.css("grid-"+attr, attrs[attr]);
       }
     };
@@ -192,16 +192,11 @@ function rowOrColumnAttr(attr) {
 }
 /** If the row and column attributes are preceded by "ng-", the CSS will update if the expression in the attribute changes. Should only be used when the expressions actually change, to avoid unnecessary watchers */
 function ngRowOrColumnAttr(attr) {
-  return [function () {
-    return {
-      restrict: 'A',
-      link: function (scope, el, attrs) {
-        let expression = attrs["ng"+attr.charAt(0).toUpperCase()+attr.slice(-2)];
-        scope.$watch(expression, ()=>{
-          el.css("grid-"+attr, scope.$eval(expression));
-          el.attr(attr, scope.$eval(expression));
-        });
-      }
-    };
-  }];
+  return rowOrColumnAttr(attr, function (scope, el, attrs) {
+    let expression = attrs["ng"+attr.charAt(0).toUpperCase()+attr.slice(-2)];
+    scope.$watch(expression, ()=>{
+      el.css("grid-"+attr, scope.$eval(expression));
+      el.attr(attr, scope.$eval(expression));
+    });
+  });
 }
