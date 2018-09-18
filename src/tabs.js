@@ -2,7 +2,7 @@
  * Kind of a "lite ng-route system"
  * Usage:
  *   1. Create an angular module called "tabConfig", with a value called tabConfig.
- *      This value should be an array of arrays where each sub array consists of two strings: a title, and a template, respectively.
+ *      This value should be an array of arrays where each subarray consists of two elements: a title (string or function), and a template (string), respectively.
  *      If the template string is prefixed by "url:" it will be treated as a URL, otherwise it will be treated as HTML code.
  *   
  *   2. Use tabs.setTab(n) in any scope to change tab
@@ -21,7 +21,7 @@ angular.module("tabs", ["tabConfig"])
 
   pub.getTab = ()=>tab;
   pub.getTabTemplate = ()=>$templateCache.get(tab);
-  pub.getTabDescription = ()=>tabConfig[tab][0];
+  pub.getTabDescription = ()=>typeof (t = tabConfig[tab][0]) === "function" ? t() : t;
   pub.setTab = n=>{
     if (!$templateCache.get(n)) {
       if (/^url:/.test(tabConfig[n][1])) $http.get(tabConfig[n][1].slice(4)).then(resp=>$templateCache.put(n, resp.data));
