@@ -11,7 +11,7 @@
  *   - The current tab can be refreshed and recompiled by calling tabs.refreshTab() in any scope
  *   - A description for the current tab is available as tabs.getTabDescription() in any scope
  *   - The configuration is available as tabs.getTabsConfig() in any scope
- *   - When changing to tab n, the nth element of all 'nav' elements will be given the class "active"
+ *   - When changing to tab n, the nth children of all elements with the class "tabs" will be given the class "active"
  */
 angular.module("tabs", ["tabConfig"])
 .service("tabService", ["$http", "$location", "$rootScope", "$templateCache", "$timeout", "q", "qa", "tabConfig", function ($http, $location, $rootScope, $templateCache, $timeout, q, qa, tabConfig) {
@@ -29,8 +29,8 @@ angular.module("tabs", ["tabConfig"])
     }
     $location.path(n);
     tab = n;
-    qa("nav").children().removeClass("active");
-    qa("nav").forEach(nav=>n < nav.children.length && n > -1 ? nav.children[n].classList.add("active") : null);
+    qa(".tabs").children().removeClass("active");
+    qa(".tabs").forEach(nav=>n < nav.children.length && n > -1 ? nav.children[n].classList.add("active") : null);
   };
   pub.refreshTab = ()=>{
     [tab, oldTab] = [-1, tab];
