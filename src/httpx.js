@@ -21,22 +21,21 @@ angular.module("httpx", ["crc32"]).service('httpx', ['$http', '$q', '$timeout', 
     let resolved = false;
     let errors = 0;
     // Create a defer object which contains a promise
-    let deferred = $q.defer();
+    const deferred = $q.defer();
     // Create options object if it does not already exist, and add necessary fields
     if (typeof options === "undefined") options = {};
     if (!("lifetime" in options)) options.lifetime = 0;
     // Create an array of urls
     if (typeof options.alt_urls === "string") options.alt_urls = [options.alt_urls];
-    let urls = typeof options.alt_urls === "undefined" ? [url] : (options.alt_urls.push(url) && options.alt_urls);
+    const urls = typeof options.alt_urls === "undefined" ? [url] : (options.alt_urls.push(url) && options.alt_urls);
     // Honor timeout if specified in options object
-    let alt_timeout = options.timeout;
-    if (typeof alt_timeout === "number") {
-      $timeout(()=>deferred.reject("TIMED OUT"), alt_timeout);
-    } else if (typeof alt_timeout !== "undefined") {
-      alt_timeout.catch(()=>deferred.reject("CANCELLED"));
-    }
-    // Use main promise as options.timeout so that no unnecessary data is loaded
-    options.timeout = deferred.promise;
+    const alt_timeout = options.timeout;
+    // Create a canceler for the HTTP requests
+    const canceler = $q.defer();
+    deferred.promise.catch(canceler.resolve);
+    options.timeout = canceler.promise;
+    if (typeof alt_timeout === "number") $timeout(canceler.resolve, alt_timeout);
+    else if (typeof alt_timeout !== "undefined") alt_timeout.catch(canceler.resolve);
     // If valid data is stored in localStorage, resolve the request using that data
     getFromStorage(urls[0], true, (stored_data, stored_data_is_valid)=>{
       if (stored_data_is_valid) {
