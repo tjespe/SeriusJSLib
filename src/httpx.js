@@ -52,17 +52,17 @@ angular.module("httpx", ["crc32"]).service('httpx', ['$http', '$q', 'crc32', fun
             // Resolve with saved data if response from server was empty
             if (!resolved && response.status === 204) deferred.resolve(JSON.parse(stored_data));
             // Resolve promise with data from request
-            else if (!resolved) deferred.resolve(response.data);
+            else if (!resolved) deferred.resolve(response);
             resolved = true;
             // Save new data to localStorage
-            saveData(urls[0], response.data, Number(options.lifetime) + Date.now());
+            saveData(urls[0], response, Number(options.lifetime) + Date.now());
           }).catch(function errorCallback(response) {
             // Count error
             errors++;
             // If the request has not been resolved and all URL requests have failed, try to find data in localStorage even if it is not valid
             if (!resolved && errors === urls.length) {
               if (stored_data) {
-                deferred.resolve(stored_data);
+                deferred.resolve(JSON.parse(stored_data));
                 resolved = true;
               } else {
                 deferred.reject(response);
