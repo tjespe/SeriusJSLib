@@ -39,17 +39,17 @@ angular.module("httpx", ["crc32"]).service('httpx', ['$http', '$q', '$timeout', 
     // If valid data is stored in localStorage, resolve the request using that data
     getFromStorage(urls[0], true, (stored_data, stored_data_is_valid)=>{
       if (stored_data_is_valid) {
-        deferred.resolve(JSON.parse(stored_data));
+        deferred.resolve(stored_data);
         resolved = true;
       } else {
         // Add the checksum of the stored data as a header to prevent the server from resending the same data
-        options.headers = {"Content-Hash": crc32(stored_data)};
+        options.headers = {"Content-Hash": crc32(JSON.stringify(stored_data ? stored_data.data : null))};
         // Loop through urls and make requests
         for (let i = 0;i < urls.length;i++) {
           options.withCredentials = urls[i].includes("bris-cdn.cf");
           $http.get(urls[i], options).then(function successCallback(response) {
             // Resolve with saved data if response from server was empty
-            if (!resolved && response.status === 204) deferred.resolve(JSON.parse(stored_data));
+            if (!resolved && response.status === 204) deferred.resolve(stored_data);
             // Resolve promise with data from request
             else if (!resolved) deferred.resolve(response);
             resolved = true;
@@ -61,7 +61,7 @@ angular.module("httpx", ["crc32"]).service('httpx', ['$http', '$q', '$timeout', 
             // If the request has not been resolved and all URL requests have failed, try to find data in localStorage even if it is not valid
             if (!resolved && errors === urls.length) {
               if (stored_data) {
-                deferred.resolve(JSON.parse(stored_data));
+                deferred.resolve(stored_data);
                 resolved = true;
               } else {
                 deferred.reject(response);
@@ -108,7 +108,7 @@ angular.module("httpx", ["crc32"]).service('httpx', ['$http', '$q', '$timeout', 
           let valid = Number(data) > Date.now();
           if (!validness_required || valid) {
             ldb.get(url, data=>{
-              if (data !== null) callback(data, valid);
+              if (data !== null) callback(JSON.parse(data), valid);
               else getFromLocalStorage(url, validness_required, callback);
             });
           } else getFromLocalStorage(url, validness_required, callback);
