@@ -2,7 +2,7 @@
 /**
  * Manages a nice grid table with sticky headers.
  * Row headings should have the class row-heading, and column headings should have the class column-heading.
- * All headings will be realigned on window scrolling or resizing, but the realign method is also available in the scope, so it can be called externally if the content changes.
+ * All headings will be realigned on window scrolling or resizing, and it will be called automatically whenever "realignment-needed" is broadcasted to the scope.
  * There are two ways to make sure elements appear in the right row and column:
  *   1. (Easiest) Specify the attributes "row" and "column" for every sibling of the grid.
  *   2. Specify the CSS "grid-area" attribute or similar on all children of the grid, and - if you are using row or column headings - make sure that:
@@ -170,7 +170,7 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
       angular.element($window.document).ready(realign);
       $window.onscroll = fixTHPositions;
       $window.onresize = realign;
-      scope.realign = realign; // Make realignment method available in scope
+      scope.$on("realignment-needed", realign); // Realign when requested
     }
   };
 }])
