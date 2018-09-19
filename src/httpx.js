@@ -6,7 +6,7 @@
  * options.lifetime can be used to specify how many milliseconds the cached resource is valid
  * options.alt_urls can be used to specify alternative urls for the resource
  */
-angular.module("httpx", ["crc32"]).service('httpx', ['$http', '$q', 'crc32', function($http, $q, crc32) {
+angular.module("httpx", ["crc32"]).service('httpx', ['$http', '$q', '$timeout', 'crc32', function($http, $q, $timeout, crc32) {
   // Make this service an extension of $http
   let vm = angular.extend({}, $http);
   // Attempt to use indexedDB:
