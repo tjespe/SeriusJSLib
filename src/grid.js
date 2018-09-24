@@ -51,7 +51,7 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
        */
       HTMLElement.prototype.limitHeightOrWidth = function (dimension, value) {
         if (!this.querySelector(".clicked")) {
-          if (el = this.querySelector(".expand")) el.remove();
+          if (this.querySelector(".expand")) this.querySelector(".expand").remove();
           let length = 0, i = 0;
           while (length < value && i < this.children.length) {
             length += dimension === 'height' ? this.children[i].clientHeight : this.children[i].clientWidth;

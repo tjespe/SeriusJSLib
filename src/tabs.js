@@ -21,7 +21,7 @@ angular.module("tabs", ["tabConfig"])
 
   pub.getTab = ()=>tab;
   pub.getTabTemplate = ()=>$templateCache.get(tab);
-  pub.getTabDescription = ()=>typeof (t = tabConfig[tab][0]) === "function" ? t() : t;
+  pub.getTabDescription = ()=>typeof tabConfig[tab][0] === "function" ? tabConfig[tab][0]() : tabConfig[tab][0];
   pub.setTab = n=>{
     if (!$templateCache.get(n)) {
       if (/^url:/.test(tabConfig[n][1])) $http.get(tabConfig[n][1].slice(4)).then(resp=>$templateCache.put(n, resp.data));
