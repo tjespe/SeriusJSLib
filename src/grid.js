@@ -57,7 +57,9 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
             length += dimension === 'height' ? this.children[i].clientHeight : this.children[i].clientWidth;
             i++;
           }
-          if (i < this.children.length) angular.element(this.children[Math.max(i-3, 0)]).after($compile(`<button onclick="this.classList.add('clicked')" ng-click="realign()" class="expand">Vis alt</button>`)(scope));
+          const btn = $compile(`<button onclick="this.classList.add('clicked')" class="expand">Vis alt</button>`)(scope);
+          btn.bind("click", realign);
+          if (i < this.children.length) angular.element(this.children[Math.max(i-3, 0)]).after(btn);
         }
       };
       
