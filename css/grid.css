@@ -28,6 +28,7 @@
 }
 .row-heading, .column-heading {
   min-height: fit-content;
+  min-width: fit-content;
   padding: 0 !important;
   transition: opacity 0.2s;
 }
