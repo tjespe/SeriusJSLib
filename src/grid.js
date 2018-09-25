@@ -109,7 +109,6 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
             if (!div.hasOwnProperty("slave")) {
               let selector = `[row="${div.getAttribute("row")}"]`;
               if (grid.findAll(selector).length > 1) div.slave = grid.findAll(selector)[1];
-              else if (div.nextElementSibling) div.slave = div.nextElementSibling;
               else div.slave = null;
             }
             if (div.slave !== null) computed_top = div.slave.getBoundingClientRect().y+"px";
@@ -150,7 +149,7 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
           colHeadings.height = Math.max(colHeadings.height, div.clientHeight);
         });
         colHeadings.css("position", colHeadings.fixed ? "fixed" : "absolute");
-        colHeadings.css("margin-top", !colHeadings.fixed || colHeadings.areChildOfCol ? `-${colHeadings.height+colHeadings.areChildOfCol*2}px` : "");
+        colHeadings.css("margin-top", !colHeadings.fixed || colHeadings.areChildOfCol ? `-${colHeadings.height+2}px` : "");
         grid.css("padding-top", `${colHeadings.height}px`);
         if (!colHeadings.fixed) colHeadings.css("left", "");
 
@@ -163,7 +162,9 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
           const dimension = rowOrColumn === "row" ? "Height" : "Width";
           grid.findAll(`.${rowOrColumn}-heading`).forEach(heading=>{
             grid.children().forEach(el=>{
-              if (el.style[idAttr] === heading.style[idAttr]) el.style["min"+dimension] = heading["client"+dimension]+"px";
+              if (el.style[idAttr] === heading.style[idAttr] && !el.classList.contains("row-heading") && !el.classList.contains("column-heading")) {
+                el.style["min"+dimension] = heading["client"+dimension]+"px";
+              }
             })
           })
         })
