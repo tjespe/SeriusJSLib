@@ -23,7 +23,7 @@ angular.module("react", [])
  * This directive makes it possible to render react components.
  * In order to make this work, you need to set the HTML attribute "component" to the name of the react component (must correspond to the one used when adding the component to the service above).
  * If you want to send props to your react component you can add custom HTML attributes, but prefix them with "prop-" (the values will be evaluated as AngularJS expressions before they are sent as props).
- * if you add something to the HTML attribute "post-render" it will be evaluated in scope after each time the react component is rendered.
+ * if you add something to the HTML attribute "post-render" it will be evaluated in scope after the react component is rendered.
  */
 .directive("react", ["$compile", "$window", "reactComponents", function ($compile, $window, reactComponents) {
   const props = {};
@@ -32,22 +32,13 @@ angular.module("react", [])
   $window.searchFn = ()=>props.searchFn;
   return {
     compile: function (el, attrs) {
-      const render = scope=>{
+      Object.keys(attrs).filter(attr=>attr.startsWith("prop")).forEach(key=>props[unprefix(key)] = null);
+      return function (scope, el, attrs) {
+        props.$scope = scope;
+        Object.keys(props).forEach(key=>props[key] = scope.$eval(attrs[prefix(key)]));
         const Component = reactComponents(attrs.component);
         $window.ReactDOM.render(React.createElement(Component, props, null), el[0]);
-        if (scope && "postRender" in attrs) scope.$eval(attrs.postRender);
-      };
-      Object.keys(attrs)
-        .filter(attr=>attr.startsWith("prop"))
-        .forEach(key=>props[unprefix(key)] = null);
-      render();
-      return function (scope, el, attrs) {
-        Object.keys(props).forEach(key=>props[key] = scope.$eval(attrs[prefix(key)]));
-        render(scope);
-        Object.keys(props).forEach(key=>scope.$watch(attrs[prefix(key)], value=>{
-          props[key] = value;
-          render(scope);
-        }));
+        if ("postRender" in attrs) scope.$eval(attrs.postRender);
       };
     }
   };
