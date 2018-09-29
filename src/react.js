@@ -11,7 +11,7 @@ angular.module("react", [])
 .service("reactComponents", [function () {
   const components = {};
   return function (componentName, newComponent) {
-    if (typeof componentName === "string" && typeof newComponent === "function") {
+    if (typeof componentName === "string" && typeof newComponent !== "undefined") {
       return components[componentName] = newComponent;
     } else if (typeof componentName === "string") {
       return components[componentName];
@@ -33,9 +33,10 @@ angular.module("react", [])
   return {
     compile: function (el, attrs) {
       const render = scope=>{
-        $window.ReactDOM.render(reactComponents(attrs.component)(props), el[0]);
+        const Component = reactComponents(attrs.component);
+        $window.ReactDOM.render(React.createElement(Component, props, null), el[0]);
         if (scope && "postRender" in attrs) scope.$eval(attrs.postRender);
-      }
+      };
       Object.keys(attrs)
         .filter(attr=>attr.startsWith("prop"))
         .forEach(key=>props[unprefix(key)] = null);
@@ -47,7 +48,7 @@ angular.module("react", [])
           props[key] = value;
           render(scope);
         }));
-      }
+      };
     }
-  }
+  };
 }]);
