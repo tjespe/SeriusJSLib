@@ -6,7 +6,7 @@
  * options.lifetime can be used to specify how many milliseconds the cached resource is valid
  * options.alt_urls can be used to specify alternative urls for the resource
  */
-angular.module("httpx", ["crc32"]).service('httpx', ['$http', '$q', '$timeout', 'crc32', function($http, $q, $timeout, crc32) {
+angular.module("httpx", ["crc32"]).service('httpx', ['$http', '$q', '$timeout', '$window', 'crc32', function($http, $q, $timeout, $window, crc32) {
   // Make this service an extension of $http
   let vm = angular.extend({}, $http);
   // Attempt to use indexedDB:
@@ -83,15 +83,15 @@ angular.module("httpx", ["crc32"]).service('httpx', ['$http', '$q', '$timeout', 
   function saveData(url, data, expiry) {
     if (vm.ldbOn) {
       try {
-        ldb.set(url, JSON.stringify(data));
-        ldb.set(url+"_expiry", expiry);
-      } catch (e) {saveDataToLocalStorage(url, data, expiry, ldbErr)};
+        $window.ldb.set(url, JSON.stringify(data));
+        $window.ldb.set(url+"_expiry", expiry);
+      } catch (ldbErr) {saveDataToLocalStorage(url, data, expiry, ldbErr)};
     } else saveDataToLocalStorage(url, data, expiry, "[none]");
   }
   function saveDataToLocalStorage(url, data, expiry, ldbErr) {
     try {
-      localStorage[url] = JSON.stringify(data);
-      localStorage[urls[0]+"_expiry"] = expiry;
+      $window.localStorage[url] = JSON.stringify(data);
+      $window.localStorage[url+"_expiry"] = expiry;
     } catch (e) {console.log("Could not save",url,"to either indexedDB or localStorage. indexedDB-error:",ldbErr,"\nlocalStorage-error:",e)}
   }
 
@@ -122,8 +122,8 @@ angular.module("httpx", ["crc32"]).service('httpx', ['$http', '$q', '$timeout', 
    * [See documentation for getFromStorage for parameter explanation]
    */
   function getFromLocalStorage(url, validness_required, callback) {
-    if (Storage && url in localStorage) {
-      callback(localStorage[url], localStorage[url+"_expiry"] > Date.now());
+    if ($window.Storage && url in $window.localStorage) {
+      callback($window.localStorage[url], $window.localStorage[url+"_expiry"] > Date.now());
     } else if (validness_required) {
       getFromStorage(url, false, callback);
     } else if (Storage) {
