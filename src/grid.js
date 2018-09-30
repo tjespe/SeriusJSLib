@@ -180,7 +180,18 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
 .directive("column", rowOrColumnAttr("column"))
 .directive("row", rowOrColumnAttr("row"))
 .directive("ngRow", ngRowOrColumnAttr("row"))
-.directive("ngColumn", ngRowOrColumnAttr("column"));
+.directive("ngColumn", ngRowOrColumnAttr("column"))
+.run(["$compile", "$document", "$rootScope", function ($compile, $document, $rootScope) {
+  // Make it possible to use this directive outside of AngularJS scopes (e.g. in a React component)
+  $rootScope.$on("realignment-needed", ()=>$document[0].querySelectorAll("[grid]").forEach(grid=>{
+    const el = angular.element(grid);
+    if (!el.scope().$$watchers) {
+      const scope = el.scope().$new();
+      $compile(grid)(scope);
+      scope.$broadcast("realignment-needed");
+    }
+  }));
+}])
 
 /** Helper directives that sets CSS based on the custom HTML attributes "column" and "row" */
 function rowOrColumnAttr(attr, linkFn) {
