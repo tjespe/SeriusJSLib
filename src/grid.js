@@ -106,7 +106,7 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
         if (grid.find(".row-heading").length) {
           grid.findAll(".row-heading").forEach(div=>{
             let computed_top = "", position = "fixed";
-            if (!div.hasOwnProperty("slave")) {
+            if (!div.slave) {
               let selector = `[row="${div.getAttribute("row")}"]`;
               if (grid.findAll(selector).length > 1) div.slave = grid.findAll(selector)[1];
               else div.slave = null;
@@ -180,18 +180,7 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
 .directive("column", rowOrColumnAttr("column"))
 .directive("row", rowOrColumnAttr("row"))
 .directive("ngRow", ngRowOrColumnAttr("row"))
-.directive("ngColumn", ngRowOrColumnAttr("column"))
-.run(["$compile", "$document", "$rootScope", function ($compile, $document, $rootScope) {
-  // Make it possible to use this directive outside of AngularJS scopes (e.g. in a React component)
-  $rootScope.$on("realignment-needed", ()=>$document[0].querySelectorAll("[grid]").forEach(grid=>{
-    const el = angular.element(grid);
-    if (!el.scope().$$watchers) {
-      const scope = el.scope().$new();
-      $compile(grid)(scope);
-      scope.$broadcast("realignment-needed");
-    }
-  }));
-}])
+.directive("ngColumn", ngRowOrColumnAttr("column"));
 
 /** Helper directives that sets CSS based on the custom HTML attributes "column" and "row" */
 function rowOrColumnAttr(attr, linkFn) {
