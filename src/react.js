@@ -37,7 +37,7 @@ angular.module("react", [])
         props.$scope = scope;
         Object.keys(props).forEach(key=>props[key] = scope.$eval(attrs[prefix(key)]));
         const Component = reactComponents(attrs.component);
-        $window.ReactDOM.render(React.createElement(Component, props, null), el[0]);
+        $window.ReactDOM.render($window.React.createElement(Component, props, null), el[0]);
         if ("postRender" in attrs) scope.$eval(attrs.postRender);
       };
     }
