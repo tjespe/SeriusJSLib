@@ -109,6 +109,7 @@ angular.module("grid", []).directive("grid", ["$compile", "$window", function ($
             if (!div.slave) {
               let selector = `[row="${div.getAttribute("row")}"]`;
               if (grid.findAll(selector).length > 1) div.slave = grid.findAll(selector)[1];
+              else if (!div.hasAttribute("row")) div.slave = div.nextElementSibling;
               else div.slave = null;
             }
             if (div.slave !== null) computed_top = div.slave.getBoundingClientRect().y+"px";
