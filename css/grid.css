@@ -31,6 +31,7 @@
   transition: opacity 0.2s;
 }
 .row-heading {
+  min-height: min-content;
   z-index: 5;
 }
 .row-heading::before, .column::before, .column-heading::before, .column::after, .column-heading::after {
@@ -58,6 +59,7 @@
   bottom: 10px;
 }
 .column-heading {
+  min-width: min-content;
   width: fill-available;
   /* @alternate */ width: -webkit-fill-available;
   /* @alternate */ width: -moz-available;
